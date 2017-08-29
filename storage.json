@@ -2,41 +2,37 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "storageAccountType": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_ZRS",
-        "Premium_LRS"
-      ],
-      "metadata": {
-        "description": "Storage Account type"
-      }
-    }
+    "env":  {
+	  "type": "array",
+	  "defaultValue": [
+	    "dev",
+		"qa",
+		"prod"
+	  ]	
+	},	
   },
   "variables": {
-    "storageAccountName": "[concat('stor', uniquestring(resourceGroup().id), 'rage')]"
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
       "apiVersion": "2016-01-01",
-      "location": "[resourceGroup().location]",
-      "sku": {
-          "name": "[parameters('storageAccountType')]"
-      },
-      "kind": "Storage", 
-      "properties": {
-      }
+       "type": "Microsoft.Storage/storageAccounts",
+       "name": "[concat('stor', copyIndex(), parameters('env')[copyIndex()])]",
+       "location": "[resourceGroup().location]",
+	   "tags":  {
+	      "Dept": "[concat('Finance', copyIndex(), parameters('env')[copyIndex()])]",
+		  "Environment": "[concat('Production', copyIndex(), parameters('env')[copyIndex()])]"
+	   },	  
+       "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "Storage",
+        "properties": {},
+        "copy": {
+          "name": "storagecopy",
+          "count": "[length(parameters('env'))]"
+        }
     }
   ],
-  "outputs": {
-      "storageAccountName": {
-          "type": "string",
-          "value": "[variables('storageAccountName')]"
-      }
-  }
+  "outputs": {}
 }
