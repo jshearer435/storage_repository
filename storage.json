@@ -6,10 +6,10 @@
 	  "type": "array",
 	  "defaultValue": [
 	    "dev",
-		"qa",
-		"prod"
+	    "qa",
+	    "prod"
 	  ]	
-	},	
+      },	
   },
   "variables": {
   },
